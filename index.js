@@ -11,6 +11,8 @@ const cors = require("cors");
 // DB Setup (connect mongoose and instance of mongodb)
 mongoose.connect(process.env.MONGODB_URL, {
 	useMongoClient: true,
+	useNewUrlParser: true,
+	useFindAndModify: false,
 });
 
 // App Setup (morgan and body-parser are middleware in Express)
