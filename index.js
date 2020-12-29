@@ -12,8 +12,6 @@ const uri = process.env.MONGODB_URL;
 // DB Setup (connect mongoose and instance of mongodb)
 mongoose.connect(uri.toString(), {
 	useMongoClient: true,
-	useNewUrlParser: true,
-	useFindAndModify: false,
 });
 
 // App Setup (morgan and body-parser are middleware in Express)
