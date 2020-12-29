@@ -6,17 +6,17 @@ const morgan = require("morgan");
 const app = express();
 const router = require("./router");
 const mongoose = require("mongoose");
-// const cors = require('cors');  // we don't need it anymore, because we use proxy server instead
+const cors = require("cors");
 
 // DB Setup (connect mongoose and instance of mongodb)
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URL, {
 	useMongoClient: true,
 });
 
 // App Setup (morgan and body-parser are middleware in Express)
 app.use(morgan("combined")); // middleware for logging
 app.use(bodyParser.json({ type: "*/*" })); // middleware for helping parse incoming HTTP requests
-// app.use(cors());  // middleware for circumventing (规避) cors error
+app.use(cors()); // middleware for circumventing cors error
 
 // Router Setup
 router(app);
