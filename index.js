@@ -7,9 +7,10 @@ const app = express();
 const router = require("./router");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const uri = process.env.MONGODB_URL;
 
 // DB Setup (connect mongoose and instance of mongodb)
-mongoose.connect(process.env.MONGODB_URL, {
+mongoose.connect(uri.toString(), {
 	useMongoClient: true,
 	useNewUrlParser: true,
 	useFindAndModify: false,
