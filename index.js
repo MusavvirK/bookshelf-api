@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 // const cors = require('cors');  // we don't need it anymore, because we use proxy server instead
 
 // DB Setup (connect mongoose and instance of mongodb)
-mongoose.connect("mongodb://127.0.0.1:27017/bookshelf-api", {
+mongoose.connect(process.env.MONGODB_URI, {
 	useMongoClient: true,
 });
 
@@ -22,7 +22,7 @@ app.use(bodyParser.json({ type: "*/*" })); // middleware for helping parse incom
 router(app);
 
 // Server Setup
-const port = process.env.PORT || 3090;
+const port = process.env.PORT;
 const server = http.createServer(app);
 server.listen(port);
 console.log("Server listening on: ", port);
