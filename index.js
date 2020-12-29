@@ -9,20 +9,16 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const uri = process.env.MONGODB_URL;
 
-// DB Setup (connect mongoose and instance of mongodb)
 mongoose.connect(uri.toString(), {
 	useMongoClient: true,
 });
 
-// App Setup (morgan and body-parser are middleware in Express)
-app.use(morgan("combined")); // middleware for logging
-app.use(bodyParser.json({ type: "*/*" })); // middleware for helping parse incoming HTTP requests
-app.use(cors()); // middleware for circumventing cors error
+app.use(morgan("combined"));
+app.use(bodyParser.json({ type: "*/*" }));
+app.use(cors());
 
-// Router Setup
 router(app);
 
-// Server Setup
 const port = process.env.PORT;
 const server = http.createServer(app);
 server.listen(port);

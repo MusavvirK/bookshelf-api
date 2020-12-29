@@ -2,17 +2,6 @@ let _ = require("lodash");
 
 const Book = require("../models/book");
 
-/**
- * ------- book APIs -------
- */
-
-/**
- * Get a list of books
- *
- * @param req
- * @param res
- * @param next
- */
 exports.fetchBooks = function (req, res, next) {
 	Book.find({})
 		.select({})
@@ -31,15 +20,7 @@ exports.fetchBooks = function (req, res, next) {
 		});
 };
 
-/**
- * Create a new book
- *
- * @param req
- * @param res
- * @param next
- */
 exports.createBook = function (req, res, next) {
-	// Require auth
 	const user = req.user;
 
 	const title = req.body.title;
@@ -49,40 +30,29 @@ exports.createBook = function (req, res, next) {
 	const authorId = user._id;
 	const authorName = user.firstName + " " + user.lastName;
 
-	// Make sure title, genre and genre are not empty
 	if (!title || !author || !genre || !publisher) {
 		return res.status(422).json({
 			message: "Title, author, genre and publisher are all required.",
 		});
 	}
 
-	// Create a new book
 	const book = new Book({
 		title: title,
 		author: author,
-		genre: _.uniq(genre.split(",").map((item) => item.trim())), // remove leading and trailing spaces, remove duplicate genre
+		genre: _.uniq(genre.split(",").map((item) => item.trim())),
 		publisher: publisher,
 		authorId: authorId,
 		authorName: authorName,
 	});
 
-	// Save the book
 	book.save(function (err, book) {
-		// callback function
 		if (err) {
 			return next(err);
 		}
-		res.json(book); // return the created book
+		res.json(book);
 	});
 };
 
-/**
- * Fetch a single book by book ID
- *
- * @param req
- * @param res
- * @param next
- */
 exports.fetchBook = function (req, res, next) {
 	Book.findById(
 		{
@@ -102,23 +72,14 @@ exports.fetchBook = function (req, res, next) {
 						"Error! The book with the given ID does not exist.",
 				});
 			}
-			res.json(book); // return the single blog book
+			res.json(book);
 		}
 	);
 };
 
-/**
- * Check if current book can be updated or deleted by the authenticated user: The author can only make change to his/her own books
- *
- * @param req
- * @param res
- * @param next
- */
 exports.allowUpdateOrDelete = function (req, res, next) {
-	// Require auth
 	const user = req.user;
 
-	// Find the book by book ID
 	Book.findById(
 		{
 			_id: req.params.id,
@@ -132,7 +93,6 @@ exports.allowUpdateOrDelete = function (req, res, next) {
 				});
 			}
 
-			// Check if the book exist
 			if (!book) {
 				return res.status(404).json({
 					message: "Error! The book with the given ID is not exist.",
@@ -142,7 +102,6 @@ exports.allowUpdateOrDelete = function (req, res, next) {
 			console.log(user._id);
 			console.log(book.authorId);
 
-			// Check if the user ID is equal to the author ID
 			if (!user._id.equals(book.authorId)) {
 				return res.send({ allowChange: false });
 			}
@@ -151,18 +110,9 @@ exports.allowUpdateOrDelete = function (req, res, next) {
 	);
 };
 
-/**
- * Edit/Update a book
- *
- * @param req
- * @param res
- * @param next
- */
 exports.updateBook = function (req, res, next) {
-	// Require auth
 	const user = req.user;
 
-	// Find the book by book ID
 	Book.findById(
 		{
 			_id: req.params.id,
@@ -176,7 +126,6 @@ exports.updateBook = function (req, res, next) {
 				});
 			}
 
-			// Check if the book exist
 			if (!book) {
 				return res.status(404).json({
 					message:
@@ -184,9 +133,6 @@ exports.updateBook = function (req, res, next) {
 				});
 			}
 
-			// Make sure the user ID is equal to the author ID (Cause only the author can edit the book)
-			// console.log(user._id);
-			// console.log(book.authorId);
 			if (!user._id.equals(book.authorId)) {
 				return res.status(422).json({
 					message:
@@ -194,7 +140,6 @@ exports.updateBook = function (req, res, next) {
 				});
 			}
 
-			// Make sure title, genre and genre are not empty
 			const title = req.body.title;
 			const author = req.body.author;
 			const genre = req.body.genre;
@@ -206,35 +151,22 @@ exports.updateBook = function (req, res, next) {
 				});
 			}
 
-			// Update user
 			book.title = title;
 			book.author = author;
-			(book.genre = _.uniq(genre.split(",").map((item) => item.trim()))), // remove leading and trailing spaces, remove duplicate genre;
+			(book.genre = _.uniq(genre.split(",").map((item) => item.trim()))),
 				(book.publisher = publisher);
 
-			// Save user
 			book.save(function (err, book) {
-				// callback function
 				if (err) {
 					return next(err);
 				}
-				res.json(book); // return the updated book
+				res.json(book);
 			});
 		}
 	);
 };
 
-/**
- * Delete a book by book ID
- *
- * @param req
- * @param res
- * @param next
- */
 exports.deleteBook = function (req, res, next) {
-	// Require auth
-
-	// Delete the book
 	Book.findByIdAndRemove(req.params.id, function (err, book) {
 		if (err) {
 			return next(err);
@@ -245,25 +177,15 @@ exports.deleteBook = function (req, res, next) {
 			});
 		}
 
-		// Return a success message
 		res.json({
 			message: "The book has been deleted successfully!",
 		});
 	});
 };
 
-/**
- * Fetch books by author ID
- *
- * @param req
- * @param res
- * @param next
- */
 exports.fetchBooksByAuthorId = function (req, res, next) {
-	// Require auth
 	const user = req.user;
 
-	// Fetch books by author ID
 	Book.find({
 		authorId: user._id,
 	})
