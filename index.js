@@ -9,10 +9,8 @@ const mongoose = require("mongoose");
 // const cors = require('cors');  // we don't need it anymore, because we use proxy server instead
 
 // DB Setup (connect mongoose and instance of mongodb)
-mongoose.connect("process.env.MONGODB_URI", {
-	useNewUrlParser: true,
-	useCreateIndex: true,
-	useFindAndModify: false,
+mongoose.connect("mongodb://127.0.0.1:27017/bookshelf-api", {
+	useMongoClient: true,
 });
 
 // App Setup (morgan and body-parser are middleware in Express)
@@ -24,7 +22,7 @@ app.use(bodyParser.json({ type: "*/*" })); // middleware for helping parse incom
 router(app);
 
 // Server Setup
-const port = process.env.PORT;
+const port = process.env.PORT || 3090;
 const server = http.createServer(app);
 server.listen(port);
 console.log("Server listening on: ", port);
